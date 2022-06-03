@@ -4,16 +4,14 @@ import datetime
 # Calc the hash
 import hashlib
 
-# JSON
-import json
 
 def hash_wrapper(self, data):
     return hashlib.sha256(data.encode()).hexdigest()
 
 class Candidate:
-    def __init__(self, name: str, age: int = None, description = None, proposals = None):
+    def __init__(self, name: str, age = None, description = None, proposals = None):
         self.name = name
-        self.age = int(age)
+        self.age = age
         self.description = description
         self.proposals = proposals
 
@@ -29,29 +27,30 @@ class Candidate:
         if self.proposals:
             s += f", {' '.join(self.proposals)}"
         else:
-            s += "No proposals"
+            s += " No proposals"
 
 
         return s
 
 
 class Voter:
-    def __init__(self, name: str, id: int):
+    def __init__(self, name: str, id_: int, choice):
         self.name = name
-        self.id  = id
+        self.id  = id_
+        self.choice = choice
 
     def __str__(self):
         return self.name
 
 class Block:
-    def __init__(self, previous_block_hash, voter: Voter, timestamp):
+    def __init__(self, timestamp, voter: Voter, previous_block_hash=''):
         
         self.nonce = 0
         
         self.previous_block_hash = previous_block_hash
         self.timestamp = timestamp
         self.voter = voter
-        self.block_data = f"{self.nonce} - {self.timestamp} - {self.voter.name} {self.voter.id} - {self.previous_block_hash}"
+        self.block_data = f"{self.nonce} - {self.timestamp} - {self.voter.name} {self.voter.id} {self.vote.choice.name} - {self.previous_block_hash}"
         self.block_hash = self.calculate_hash
 
     # Proof of work
@@ -73,9 +72,17 @@ class Block:
 
         return s
 
-class Blockchain():
+
+
+
+
+
+genesis_candidate = Candidate('')
+genesis_voter = Voter('', '', genesis_candidate)
+
+class Blockchain:
     def __init__(self):
-        self.chain = [Block(0, datetime.now(),'First Block'),]
+        self.chain = [Block(0, genesis_voter, datetime.now()),]
         self.difficulty = 4
 
     def add_block(self, new_block):
