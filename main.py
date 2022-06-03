@@ -1,4 +1,4 @@
-from voting import Candidate, Voter, Block, Blockchain
+from voting import Candidate, Voter, Block, Blockchain, datetime
 
 def main():
     print("BLOCKCHAIN VOTING SYSTEM")
@@ -24,14 +24,15 @@ def main():
 
     i = 1
     while i not in ["quit", "stop"]:
-        name = input("Please introduce your name")
-        id = input("Now your ID")
+        name = input("Please introduce your name: ")
+        id = input("Now your ID: ")
         vote = None
         while True:
             try:
-                vote = int(input("Your choice from the above")) 
+                vote = int(input("Your choice from the above: ")) 
                 if vote in d:
                     vote = d[vote]
+                    break
                 else:
                     continue
             except:
@@ -41,7 +42,7 @@ def main():
         print("\n\n")
         blockchain.add_block(Block(datetime.now(), voter))
         
-        i = input("To stop voting, type 'stop' or 'quit'")
+        i = input("To stop voting, type 'stop' or 'quit': ")
 
     blockchain.display_chain()
 

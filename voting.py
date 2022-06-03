@@ -1,11 +1,11 @@
 # Timestamp
-import datetime
+from datetime import datetime
 
 # Calc the hash
 import hashlib
 
 
-def hash_wrapper(self, data):
+def hash_wrapper(data):
     return hashlib.sha256(data.encode()).hexdigest()
 
 class Candidate:
@@ -50,23 +50,24 @@ class Block:
         self.previous_block_hash = previous_block_hash
         self.timestamp = timestamp
         self.voter = voter
-        self.block_data = f"{self.nonce} - {self.timestamp} - {self.voter.name} {self.voter.id} {self.vote.choice.name} - {self.previous_block_hash}"
-        self.block_hash = self.calculate_hash
+        self.block_data = "" 
+        self.block_hash = self.calculate_hash()
 
     # Proof of work
     # Difficulty less than 256
     def mine_block(self, difficulty):
-        while(self.hash[:difficulty] != str('').zfill(difficulty)):
+        while(self.block_hash[:difficulty] != str('').zfill(difficulty)):
             self.nonce += 1
-            self.hash = self.calculate_hash(self.block_data)
+            self.block_hash = self.calculate_hash()
     
-    @property
     def calculate_hash(self):
+        self.block_data = f"{self.nonce} - {self.timestamp} - {self.voter.name} {self.voter.id} {self.voter.choice.name} - {self.previous_block_hash}"
         return hash_wrapper(self.block_data)
 
     def __str__(self):
         s = f"Block Nonce: {self.nonce}\n"
         s += "Voter info: " + str(self.voter.name)+"\n"
+        s += "Vote: " + str(self.voter.choice)+"\n"
         s += "Old hash: " + str(self.previous_block_hash)+"\n"
         s += "New hash :" + str(self.block_hash)+"\n"
 
@@ -83,7 +84,7 @@ genesis_voter = Voter('', '', genesis_candidate)
 class Blockchain:
     def __init__(self):
         self.chain = [Block(0, genesis_voter, datetime.now()),]
-        self.difficulty = 4
+        self.difficulty = 3
 
     def add_block(self, new_block):
         new_block.previous_block_hash = self.last_block.block_hash
@@ -109,7 +110,7 @@ class Blockchain:
     
     def display_chain(self):
         for i in range(len(self.chain)):
-            print(f"Block: {Block}")
+            print(f"Block:\n {self.chain[i]}")
 
     @property
     def last_block(self):
